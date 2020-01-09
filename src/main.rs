@@ -2,6 +2,7 @@ use std::io;
 use rand::Rng;
 use std::process::exit;
 use rand::seq::SliceRandom;
+use itertools::Itertools;
 
 fn main() {
     println!("Let's play mastermind! My goal is to guess your number.");
@@ -15,7 +16,7 @@ fn main() {
     let input = input.trim();
 
     //check if input is actually a number, then set to size
-    let _size: u32 = match input.trim().parse() {
+    let _size: usize = match input.trim().parse() {
         Ok(num) => num,
         Err(_) => {
             println!("That's not a number!");
@@ -23,12 +24,22 @@ fn main() {
         }
     };
 
+    //possible digits
     let digits = "1234567890";
 
-    let mut choices = [1,2];
+    let gen = (0..10).permutations(_size);
+    let mut choices = Vec::new();
+
+    //Convert Permutations into vectorized list
+    for i in gen{
+        choices.push(i);
+    }
 
     choices.shuffle(&mut rng);
 
+    for i in choices{
+        println!("{:?}", i);
+    }
 }
 
 
