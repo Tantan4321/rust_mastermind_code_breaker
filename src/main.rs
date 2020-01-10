@@ -62,7 +62,7 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(&mut input).expect("Input failed");
         let input = input.trim();
-        let score = parse_score(input).to_vec();
+        let mut score = parse_score(input).to_vec();
 
         //check win condition
         if score[0] == 6 {
@@ -72,10 +72,11 @@ fn main() {
 
         //clone choices and reset the choices array
         let temp_choices = choices.clone();
-        let mut choices: Vec<Vec<i32>> = Vec::new();
+        choices.clear();
 
         for choice in temp_choices{
-            if score == score_calc(&choice, &check) {
+            let calc = score_calc(&choice, &check);
+            if score == calc{
                 choices.push(choice);
             }
         }
