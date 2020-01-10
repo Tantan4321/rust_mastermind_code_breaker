@@ -24,28 +24,90 @@ fn main() {
         }
     };
 
-    //possible digits
-    let digits = "1234567890";
-
+    /**
+        Permutation generation
+    */
     let gen = (0..10).permutations(_size);
     let mut choices = Vec::new();
 
-    //Convert Permutations into vectorized list
+    //convert Permutations into vectorized list
     for i in gen{
         choices.push(i);
     }
-
+    //shuffle the list of possibilities
     choices.shuffle(&mut rng);
 
+    /* debug
     for i in choices{
         println!("{:?}", i);
     }
-}
+    */
+    /**
+        UI init
+    */
+    let mut answers: Vec<Vec<i32>> = Vec::new();
+    let mut scores: Vec<Vec<i32>> = Vec::new();
 
+    loop {
+        let mut check = choices[0].to_vec();
+
+        print!("{}   ", choices.len());
+        print!("My guess is: ");
+        for num in &check{
+            print!("{}", num);
+        }
+        println!(". Answer? (in format: '1,2')");
+
+        //read and parse user response
+        let mut input = String::new();
+        stdin.read_line(&mut input).expect("Input failed");
+        let input = input.trim();
+        let score = parse_score(input).to_vec();
+
+        //check win condition
+        if score[0] == 6 {
+            println!("LET'S GOOOOOOO!!");
+            exit(0);
+        }
+
+        //clone choices and reset the choices array
+        let temp_choices = choices.clone();
+        let mut choices: Vec<Vec<i32>> = Vec::new();
+
+        for choice in temp_choices{
+            if score == score_calc(&choice, &check) {
+                choices.push(choice);
+            }
+        }
+
+        //push to answers and scores log
+        scores.push(score);
+        answers.push(check);
+    }
+
+}
 
 fn parse_score(score: &str) -> Vec<i32> {
     let score_list: Vec<i32> = score.trim().split(",")
         .map(|s| s.parse().unwrap())
         .collect();
     score_list
+}
+
+fn score_calc(guess: &Vec<i32>, chosen: &Vec<i32>) -> Vec<i32> {
+    let mut c: i32 = 0;
+    let mut w: i32 = 0;
+
+    for i in 0..guess.len(){
+        if guess[i] == chosen[i]{
+            c += 1;
+        }else if chosen.contains(&guess[i]) {
+            w += 1;
+        }
+    }
+
+    let mut ret: Vec<i32> = Vec::new();
+    ret.push(c);
+    ret.push(w);
+    return ret;
 }
