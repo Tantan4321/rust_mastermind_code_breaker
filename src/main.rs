@@ -45,8 +45,8 @@ fn main() {
     /**
         UI init
     */
-    let mut answers: Vec<Vec<i32>> = Vec::new();
-    let mut scores: Vec<Vec<i32>> = Vec::new();
+    let mut answers: Vec<Vec<usize>> = Vec::new();
+    let mut scores: Vec<Vec<usize>> = Vec::new();
 
     loop {
         let mut check = choices[0].to_vec();
@@ -88,16 +88,16 @@ fn main() {
 
 }
 
-fn parse_score(score: &str) -> Vec<i32> {
-    let score_list: Vec<i32> = score.trim().split(",")
+fn parse_score(score: &str) -> Vec<usize> {
+    let score_list: Vec<usize> = score.trim().split(",")
         .map(|s| s.parse().unwrap())
         .collect();
     score_list
 }
 
-fn score_calc(guess: &Vec<i32>, chosen: &Vec<i32>) -> Vec<i32> {
-    let mut c: i32 = 0;
-    let mut w: i32 = 0;
+fn score_calc(guess: &Vec<usize>, chosen: &Vec<usize>) -> Vec<usize> {
+    let mut c: usize = 0;
+    let mut w: usize = 0;
 
     for i in 0..guess.len(){
         if guess[i] == chosen[i]{
@@ -107,7 +107,7 @@ fn score_calc(guess: &Vec<i32>, chosen: &Vec<i32>) -> Vec<i32> {
         }
     }
 
-    let mut ret: Vec<i32> = Vec::new();
+    let mut ret: Vec<usize> = Vec::new();
     ret.push(c);
     ret.push(w);
     return ret;
