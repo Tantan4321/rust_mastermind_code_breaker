@@ -8,13 +8,6 @@ use crate::codebreaker::CodeBreaker;
 mod codebreaker;
 
 fn main() {
-
-    let breaker = CodeBreaker::constructor();
-    for val in breaker.get_combos() {
-
-        println!("{:?}", val);
-    }
-    /*
     println!("Let's play mastermind! My goal is to guess your number.");
 
     let stdin = io::stdin();
@@ -35,23 +28,20 @@ fn main() {
     };
 
     /**
-        Permutation generation
+        Combination generation
     */
-    let gen = (0..10).permutations(_size);
-    let mut choices = Vec::new();
+    let breaker = CodeBreaker::constructor();
 
-    //convert Permutations into vectorized list
-    for i in gen{
-        choices.push(i);
-    }
-    //shuffle the list of possibilities
-    choices.shuffle(&mut rng);
+    /*
+    // ###############################
+    // #   Printout Combination set  #
+    // ###############################
+    for val in breaker.get_combos() {
 
-    /* debug
-    for i in choices{
-        println!("{:?}", i);
+        println!("{:?}", val);
     }
     */
+
     /**
         UI init
     */
@@ -63,7 +53,7 @@ fn main() {
 
         print!("{}   ", choices.len());
         print!("My guess is: ");
-        for num in &check{
+        for num in &check {
             print!("{}", num);
         }
         println!(". Answer? (in format: '1,2')");
@@ -74,9 +64,9 @@ fn main() {
         let input = input.trim();
         let mut score = parse_score(input).to_vec();
 
-        //check win condition
+        /**check win condition */
         if score[0] == 6 {
-            println!("LET'S GOOOOOOO!!");
+            println!("CodeBreaker wins!!");
             exit(0);
         }
 
@@ -84,9 +74,9 @@ fn main() {
         let temp_choices = choices.clone();
         choices.clear();
 
-        for choice in temp_choices{
+        for choice in temp_choices {
             let calc = score_calc(&choice, &check);
-            if score == calc{
+            if score == calc {
                 choices.push(choice);
             }
         }
@@ -95,7 +85,7 @@ fn main() {
         scores.push(score);
         answers.push(check);
     }
-*/
+    * /
 }
 
 fn parse_score(score: &str) -> Vec<usize> {
@@ -109,10 +99,10 @@ fn score_calc(guess: &Vec<usize>, chosen: &Vec<usize>) -> Vec<usize> {
     let mut c: usize = 0;
     let mut w: usize = 0;
 
-    for i in 0..guess.len(){
-        if guess[i] == chosen[i]{
+    for i in 0..guess.len() {
+        if guess[i] == chosen[i] {
             c += 1;
-        }else if chosen.contains(&guess[i]) {
+        } else if chosen.contains(&guess[i]) {
             w += 1;
         }
     }

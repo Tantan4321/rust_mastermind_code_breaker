@@ -24,13 +24,21 @@ impl CodeBreaker {
             combinations: CodeBreaker::create_combos(),
         }
 
+    pub fn play(&mut self) -> usize {
+        if self.guessed.is_empty() {
+            let guess = Self::init_guess();
+            self.guessed.push(guess);
+            return guess
+        }else {
+            return 0;  //TODO: implement
+        }
     }
 
     pub fn get_combos(self) -> Vec<Vec<usize>>{
         self.combinations
     }
 
-    pub fn guess() -> usize {
+    fn init_guess() -> usize {
         return 001122;
     }
 }
