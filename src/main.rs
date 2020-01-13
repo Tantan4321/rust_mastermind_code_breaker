@@ -30,9 +30,9 @@ fn main() {
     /**
         Combination generation
     */
-    let breaker = CodeBreaker::constructor();
+    let breaker = CodeBreaker::constructor(_size);
 
-    /*
+
     // ###############################
     // #   Printout Combination set  #
     // ###############################
@@ -40,11 +40,12 @@ fn main() {
 
         println!("{:?}", val);
     }
-    */
 
+    /*
     /**
         UI init
     */
+
     let mut answers: Vec<Vec<usize>> = Vec::new();
     let mut scores: Vec<Vec<usize>> = Vec::new();
 
@@ -84,8 +85,7 @@ fn main() {
         //push to answers and scores log
         scores.push(score);
         answers.push(check);
-    }
-    * /
+    }*/
 }
 
 fn parse_score(score: &str) -> Vec<usize> {

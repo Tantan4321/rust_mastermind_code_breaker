@@ -6,44 +6,54 @@ use std::borrow::BorrowMut;
 static mut combo_gen: Vec<Vec<usize>> = Vec::new(); //TODO: make this local to Codebreaker
 
 pub struct CodeBreaker {
-    pub guessed: Vec<usize>,
+    pub secret_length: usize,
+    pub guessed: Vec<String>,
     pub combinations: Vec<Vec<usize>>,
 }
 
 impl CodeBreaker {
-    fn create_combos() -> Vec<Vec<usize>>{
-        let mut current: Vec<usize> = vec![0; 6 as usize];
+    fn create_combos(length: usize) -> Vec<Vec<usize>> {
+        let mut current: Vec<usize> = vec![0; length];
         let digits: Vec<usize> = (0..10).collect();
-        combo_recur(6, 0, current.as_mut(), &digits);
-        return unsafe{combo_gen.clone()};
+        combo_recur(length, 0, current.as_mut(), &digits);
+        return unsafe { combo_gen.clone() };
     }
 
-    pub fn constructor() -> CodeBreaker {
+    pub fn constructor(length: usize) -> CodeBreaker {
         return CodeBreaker {
+            secret_length: length,
             guessed: vec![],
-            combinations: CodeBreaker::create_combos(),
-        }
+            combinations: CodeBreaker::create_combos(length),
+        };
+    }
 
-    pub fn play(&mut self) -> usize {
+    pub fn play(self: &mut Self) -> String {
         if self.guessed.is_empty() {
-            let guess = Self::init_guess();
-            self.guessed.push(guess);
-            return guess
-        }else {
-            return 0;  //TODO: implement
+            let guess = Self::init_guess(self.secret_length);
+            self.guessed.push(guess.to_string());
+            return guess.to_string();
+        } else {
+            return "0".to_string();  //TODO: implement
         }
     }
 
-    pub fn get_combos(self) -> Vec<Vec<usize>>{
+    pub fn get_combos(self) -> Vec<Vec<usize>> {
         self.combinations
     }
 
-    fn init_guess() -> usize {
-        return 001122;
+    fn init_guess(length: usize) -> String {
+        let format: Vec<usize> =
+            [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9].to_vec();
+
+        let mut ret: String = String::new();
+        for x in 0..length {
+            ret.push_str(&(format[x % 20]).to_string());
+        }
+        return ret;
     }
 }
 
-fn combo_recur(combinationLength: usize, element: usize, current: &Vec<usize>, digits: &Vec<usize>){
+fn combo_recur(combinationLength: usize, element: usize, current: &Vec<usize>, digits: &Vec<usize>) {
     let mut current_copy = current.to_vec();
     if element >= combinationLength {
         unsafe {
