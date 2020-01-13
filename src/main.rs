@@ -3,8 +3,18 @@ use rand::Rng;
 use std::process::exit;
 use rand::seq::SliceRandom;
 use itertools::Itertools;
+use crate::codebreaker::CodeBreaker;
+
+mod codebreaker;
 
 fn main() {
+
+    let breaker = CodeBreaker::constructor();
+    for val in breaker.get_combos() {
+
+        println!("{:?}", val);
+    }
+    /*
     println!("Let's play mastermind! My goal is to guess your number.");
 
     let stdin = io::stdin();
@@ -85,7 +95,7 @@ fn main() {
         scores.push(score);
         answers.push(check);
     }
-
+*/
 }
 
 fn parse_score(score: &str) -> Vec<usize> {
