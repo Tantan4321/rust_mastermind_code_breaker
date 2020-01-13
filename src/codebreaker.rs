@@ -11,17 +11,17 @@ pub struct CodeBreaker {
 }
 
 impl CodeBreaker {
-    fn create_combos() {
+    fn create_combos() -> Vec<Vec<usize>>{
         let mut current: Vec<usize> = vec![0; 6 as usize];
         let digits: Vec<usize> = (0..10).collect();
         combo_recur(6, 0, current.as_mut(), &digits);
+        return unsafe{combo_gen.clone()};
     }
 
     pub fn constructor() -> CodeBreaker {
-        CodeBreaker::create_combos();
         return CodeBreaker {
             guessed: vec![],
-            combinations: unsafe{combo_gen.clone()},
+            combinations: CodeBreaker::create_combos(),
         }
 
     }
@@ -35,17 +35,17 @@ impl CodeBreaker {
     }
 }
 
-fn combo_recur(combinationLength: usize, element: usize, bruh: &Vec<usize>, digits: &Vec<usize>){
-    let mut current = bruh.to_vec();
+fn combo_recur(combinationLength: usize, element: usize, current: &Vec<usize>, digits: &Vec<usize>){
+    let mut current_copy = current.to_vec();
     if element >= combinationLength {
         unsafe {
-            combo_gen.push(current);
+            combo_gen.push(current_copy);
         }
         return;
     }
     for i in 0..digits.len() {
-        current[element] = digits[i];
-        combo_recur(combinationLength, element + 1, &mut current, digits);
+        current_copy[element] = digits[i];
+        combo_recur(combinationLength, element + 1, &mut current_copy, digits);
     }
     return;
 }
