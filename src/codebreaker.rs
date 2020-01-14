@@ -1,12 +1,7 @@
-use std::io;
-use rand::Rng;
-use std::process::exit;
-use std::borrow::BorrowMut;
-use crate::{parse_response, vectorize_number};
-use std::ops::Index;
+use crate::vectorize_number;
 use std::collections::HashMap;
 
-static mut combo_gen: Vec<Vec<usize>> = Vec::new(); //TODO: make this local to Codebreaker
+static mut COMBO_GEN: Vec<Vec<usize>> = Vec::new(); //TODO: make this local to Codebreaker
 
 pub struct CodeBreaker {
     pub secret_length: usize,
@@ -19,7 +14,7 @@ impl CodeBreaker {
         let mut current: Vec<usize> = vec![0; length];
         let digits: Vec<usize> = (0..10).collect();
         combo_recur(length, 0, current.as_mut(), &digits);
-        return unsafe { combo_gen.clone() };
+        return unsafe { COMBO_GEN.clone() };
     }
 
     pub fn constructor(length: usize) -> CodeBreaker {
@@ -59,7 +54,7 @@ impl CodeBreaker {
         let mut score: HashMap<Vec<usize>, usize> = HashMap::new();
         let mut next_guesses: Vec<Vec<usize>> = Vec::new();
 
-        let combos = unsafe { combo_gen.clone() };
+        let combos = unsafe { COMBO_GEN.clone() };
         let mut max: usize = 0;
         let mut min: usize = usize::max_value();
 
@@ -108,8 +103,8 @@ impl CodeBreaker {
         let index = self.combinations.iter().position(|x| *x == last_guess).unwrap();
         self.combinations.remove(index);
         unsafe { //TODO: remove after rework
-            let index = combo_gen.iter().position(|x| *x == last_guess).unwrap();
-            combo_gen.remove(index);
+            let index = COMBO_GEN.iter().position(|x| *x == last_guess).unwrap();
+            COMBO_GEN.remove(index);
         }
     }
 
@@ -118,17 +113,17 @@ impl CodeBreaker {
     }
 }
 
-fn combo_recur(combinationLength: usize, element: usize, current: &Vec<usize>, digits: &Vec<usize>) {
+fn combo_recur(combination_length: usize, element: usize, current: &Vec<usize>, digits: &Vec<usize>) {
     let mut current_copy = current.to_vec();
-    if element >= combinationLength {
+    if element >= combination_length {
         unsafe {
-            combo_gen.push(current_copy);
+            COMBO_GEN.push(current_copy);
         }
         return;
     }
     for i in 0..digits.len() {
         current_copy[element] = digits[i];
-        combo_recur(combinationLength, element + 1, &mut current_copy, digits);
+        combo_recur(combination_length, element + 1, &mut current_copy, digits);
     }
     return;
 }

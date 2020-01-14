@@ -1,8 +1,6 @@
 use std::io;
-use rand::Rng;
 use std::process::exit;
-use rand::seq::SliceRandom;
-use itertools::Itertools;
+
 use crate::codebreaker::CodeBreaker;
 
 mod codebreaker;
@@ -12,7 +10,6 @@ fn main() {
 
     let stdin = io::stdin();
     let mut input = String::new();
-    let mut rng = rand::thread_rng();
 
     println!("How many digits is your secret number?");
     stdin.read_line(&mut input).expect("Input failed");
@@ -27,7 +24,7 @@ fn main() {
         }
     };
 
-    /**
+    /* --------------------------
         Combination generation
     */
     let mut breaker = CodeBreaker::constructor(_size);
@@ -40,13 +37,12 @@ fn main() {
         println!("{:?}", val);
     }*/
 
-    /**
+    /* --------------------------
         UI init
     */
 
     let mut won = false;
     let mut this_guess = init_guess(_size);
-    let mut score: Vec<usize> = [0,0].to_vec();
 
     while !won {
         print!("My guess is: {}", this_guess);
@@ -67,7 +63,7 @@ fn main() {
             break;
         }
 
-        let mut this_guess = breaker.play(&this_guess, score).to_string();
+        this_guess = breaker.play(&this_guess, score).to_string();
 
     }
 }
