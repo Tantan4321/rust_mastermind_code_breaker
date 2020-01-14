@@ -32,7 +32,9 @@ impl CodeBreaker {
 
     pub fn play(self: &mut Self, last_guess: &String, last_score: Vec<usize>) -> String {
         self.remove_guess(vectorize_number(&last_guess));
+        println!("past remove");
         self.prune(&last_guess.to_string(), last_score);
+        println!("past pruning. length of combinations: {}", self.combinations.len());
 
         let guess = self.next_guess().to_string();
         println!("second. Guessed: {:?}", self.guessed);
@@ -41,7 +43,7 @@ impl CodeBreaker {
 
 
     pub fn next_guess(&self) -> String {
-        let next_guesses = unsafe { self.minimax() };
+        let next_guesses = self.minimax() ;
 
         let next_guess = next_guesses.first().unwrap();
 
@@ -52,15 +54,18 @@ impl CodeBreaker {
         return result;
     }
 
-    unsafe fn minimax(self: &Self) -> Vec<Vec<usize>> {
+    fn minimax(self: &Self) -> Vec<Vec<usize>> { //TODO: rework
         let mut score_count: HashMap<Vec<usize>, usize> = HashMap::new();
         let mut score: HashMap<Vec<usize>, usize> = HashMap::new();
         let mut next_guesses: Vec<Vec<usize>> = Vec::new();
 
+        let combos = unsafe { combo_gen.clone() };
         let mut max: usize = 0;
         let mut min: usize = usize::max_value();
 
-        for combo in combo_gen.iter() {
+        println!("length of combos: {}", combos.len());
+
+        for combo in combos.iter() {
             for pruned in self.combinations.iter() {
                 let this_score = score_calc(&combo, &pruned); //comp scores
                 *(score_count.entry(this_score).or_insert(0)) += 1; //add to scoring list
@@ -74,6 +79,7 @@ impl CodeBreaker {
             score.insert(combo.to_vec(), max); //insert into max count for this combo
             score_count.clear()
         }
+        println!("past score max counter");
 
         //Find the minimum count
         for elem in score.iter() {
@@ -95,13 +101,13 @@ impl CodeBreaker {
     pub fn prune(self: &mut Self, last_guess: &String, response: Vec<usize>) {
         self.guessed.push(last_guess.to_string());
         let vec_guess = vectorize_number(&last_guess);
-        self.guessed.retain(&|element: &String| score_calc(&vec_guess, &vectorize_number(element)) == response)
+        self.combinations.retain(&|element: &Vec<usize>| score_calc(&vec_guess, element) == response)
     }
 
     pub fn remove_guess(self: &mut Self, last_guess: Vec<usize>) {
         let index = self.combinations.iter().position(|x| *x == last_guess).unwrap();
         self.combinations.remove(index);
-        unsafe {
+        unsafe { //TODO: remove after rework
             let index = combo_gen.iter().position(|x| *x == last_guess).unwrap();
             combo_gen.remove(index);
         }
