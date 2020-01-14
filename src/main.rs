@@ -30,49 +30,58 @@ fn main() {
     /**
         Combination generation
     */
-    let breaker = CodeBreaker::constructor(_size);
+    let mut breaker = CodeBreaker::constructor(_size);
 
-
+    /*
     // ###############################
     // #   Printout Combination set  #
     // ###############################
-    for val in breaker.get_combos() {
+    for val in breaker.get_combos().iter() {
         println!("{:?}", val);
-    }
+    }*/
 
     /**
         UI init
     */
 
     let mut won = false;
+    let mut this_guess = init_guess(_size);
+    let mut score: Vec<usize> = [0,0].to_vec();
 
     while !won {
-        let this_guess = breaker.play();
         print!("My guess is: {}", this_guess);
 
-        println!(" . Answer? (in format: '1,2')");
+        println!(". Answer? (in format: '1,2')");
 
         //read and parse user response
         let mut input = String::new();
         stdin.read_line(&mut input).expect("Input failed");
         let input = input.trim();
         //parse raw input into vectorized response
-        let mut score = parse_response(input).to_vec();
+        let score = parse_response(input).to_vec();
 
-        /**check win condition */
+        /*check win condition */
         if score[0] == _size {
             println!("######################\nCodeBreaker wins!!\n######################");
-            win = true;
+            won = true;
             break;
         }
 
-        breaker.remove_guess(vectorize_number(&this_guess));
-        breaker.prune(this_guess.to_string(), score);
-
+        let mut this_guess = breaker.play(&this_guess, score).to_string();
 
     }
 }
 
+fn init_guess(length: usize) -> String {
+    let format: Vec<usize> =
+        [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9].to_vec();
+
+    let mut ret: String = String::new();
+    for x in 0..length {
+        ret.push_str(&(format[x % 20]).to_string());
+    }
+    return ret;
+}
 
 fn vectorize_number(num: &str) -> Vec<usize> {
     num.chars()
