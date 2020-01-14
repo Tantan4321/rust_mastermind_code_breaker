@@ -2,6 +2,8 @@ use std::io;
 use rand::Rng;
 use std::process::exit;
 use std::borrow::BorrowMut;
+use crate::{parse_response, vectorize_number};
+use std::ops::Index;
 
 static mut combo_gen: Vec<Vec<usize>> = Vec::new(); //TODO: make this local to Codebreaker
 
@@ -33,7 +35,38 @@ impl CodeBreaker {
             self.guessed.push(guess.to_string());
             return guess.to_string();
         } else {
+            let guess = self.next_guess();
             return "0".to_string();  //TODO: implement
+        }
+    }
+
+
+    pub fn next_guess(&self) -> String{
+        let sorted = |set: Vec<usize>| {
+            let mut temp = set;
+            temp.sort();
+            temp
+        };
+
+        let next_guesses = sorted(self.minimax());
+    }
+
+    fn minimax(self: &Self) -> Vec<usize> {
+        return vec![]
+    }
+
+
+    pub fn prune(self: &mut Self, last_guess: String, response: Vec<usize>) {
+        self.guessed.push(last_guess);
+        let vec_guess = vectorize_number(&last_guess);
+        self.guessed.retain(&|element: &Vec<usize>| score_calc(&vec_guess, element) == response)
+    }
+
+    pub fn remove_guess(self: &mut Self, last_guess: Vec<usize>){
+        let index = self.combinations.iter().position(|x| *x == some_x).unwrap();
+        self.combinations.remove(index);
+        unsafe {
+            combo_gen.remove(index);
         }
     }
 
@@ -68,7 +101,7 @@ fn combo_recur(combinationLength: usize, element: usize, current: &Vec<usize>, d
     return;
 }
 
-fn score_calc(guess: &Vec<usize>, chosen: &Vec<usize>) -> Vec<usize> {
+fn score_calc(guess: &Vec<usize>, chosen: &Vec<usize>) -> Vec<usize> { //TODO: check behavior
     let mut c: usize = 0;
     let mut w: usize = 0;
     for i in 0..guess.len() {

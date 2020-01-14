@@ -37,78 +37,52 @@ fn main() {
     // #   Printout Combination set  #
     // ###############################
     for val in breaker.get_combos() {
-
         println!("{:?}", val);
     }
 
-    /*
     /**
         UI init
     */
 
-    let mut answers: Vec<Vec<usize>> = Vec::new();
-    let mut scores: Vec<Vec<usize>> = Vec::new();
+    let mut won = false;
 
-    loop {
-        let mut check = choices[0].to_vec();
+    while !won {
+        let this_guess = breaker.play();
+        print!("My guess is: {}", this_guess);
 
-        print!("{}   ", choices.len());
-        print!("My guess is: ");
-        for num in &check {
-            print!("{}", num);
-        }
-        println!(". Answer? (in format: '1,2')");
+        println!(" . Answer? (in format: '1,2')");
 
         //read and parse user response
         let mut input = String::new();
         stdin.read_line(&mut input).expect("Input failed");
         let input = input.trim();
-        let mut score = parse_score(input).to_vec();
+        //parse raw input into vectorized response
+        let mut score = parse_response(input).to_vec();
 
         /**check win condition */
-        if score[0] == 6 {
-            println!("CodeBreaker wins!!");
-            exit(0);
+        if score[0] == _size {
+            println!("######################\nCodeBreaker wins!!\n######################");
+            win = true;
+            break;
         }
 
-        //clone choices and reset the choices array
-        let temp_choices = choices.clone();
-        choices.clear();
+        breaker.remove_guess(vectorize_number(&this_guess));
+        breaker.prune(this_guess.to_string(), score);
 
-        for choice in temp_choices {
-            let calc = score_calc(&choice, &check);
-            if score == calc {
-                choices.push(choice);
-            }
-        }
 
-        //push to answers and scores log
-        scores.push(score);
-        answers.push(check);
-    }*/
+    }
 }
 
-fn parse_score(score: &str) -> Vec<usize> {
+
+fn vectorize_number(num: &str) -> Vec<usize> {
+    num.chars()
+        .map(|s| s.to_string().parse().unwrap())
+        .collect()
+}
+
+fn parse_response(score: &str) -> Vec<usize> {
     let score_list: Vec<usize> = score.trim().split(",")
         .map(|s| s.parse().unwrap())
         .collect();
     score_list
-}
-
-fn score_calc(guess: &Vec<usize>, chosen: &Vec<usize>) -> Vec<usize> {
-    let mut c: usize = 0;
-    let mut w: usize = 0;
-
-    for i in 0..guess.len() {
-        if guess[i] == chosen[i] {
-            c += 1;
-        } else if chosen.contains(&guess[i]) {
-            w += 1;
-        }
-    }
-
-    let mut ret: Vec<usize> = Vec::new();
-    ret.push(c);
-    ret.push(w);
-    return ret;
 }
