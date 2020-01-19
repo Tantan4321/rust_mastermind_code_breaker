@@ -27,15 +27,16 @@ fn main() {
     /* --------------------------
         Combination generation
     */
-    let mut breaker = CodeBreaker::constructor(_size);
-
+    let mut breaker = CodeBreaker::constructor();
+    breaker.create_combos(_size);
     /*
     // ###############################
     // #   Printout Combination set  #
     // ###############################
     for val in breaker.get_combos().iter() {
         println!("{:?}", val);
-    }*/
+    }
+    */
 
     /* --------------------------
         UI init
